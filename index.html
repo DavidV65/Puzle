@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>15 Puzzle</title>
+  <style>
+    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    #puzzle { display: grid; grid-template-columns: repeat(4, 80px); gap: 5px; }
+    .tile {
+      width: 80px; height: 80px; background: #4caf50; color: white;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 24px; font-weight: bold; cursor: pointer;
+    }
+    .empty { background: #ccc; }
+  </style>
+</head>
+<body>
+  <div id="puzzle"></div>
+  <script>
+    const puzzle = document.getElementById("puzzle");
+    let tiles = [];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function createTiles() {
+      let numbers = [...Array(15).keys()].map(n => n + 1);
+      numbers = shuffle(numbers);
+      numbers.push(0); // 0 = empty
+
+      tiles = numbers.map(n => {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        if (n === 0) tile.classList.add("empty");
+        else tile.textContent = n;
+        puzzle.appendChild(tile);
+        return tile;
+      });
+
+      tiles.forEach((tile, i) => tile.addEventListener("click", () => moveTile(i)));
+    }
+
+    function moveTile(i) {
+      const emptyIndex = tiles.findIndex(tile => tile.classList.contains("empty"));
+      const validMoves = [i - 1, i + 1, i - 4, i + 4];
+      if (validMoves.includes(emptyIndex)) {
+        [tiles[i].textContent, tiles[emptyIndex].textContent] = [tiles[emptyIndex].textContent, tiles[i].textContent];
+        tiles[i].classList.toggle("empty");
+        tiles[emptyIndex].classList.toggle("empty");
+      }
+    }
+
+    createTiles();
+  </script>
+</body>
+</html>
